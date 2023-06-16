@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="{{ request.locale.iso_code }}" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="">
+    <link rel="canonical" href="{{ canonical_url }}">
+    <link
+      rel="preconnect"
+      href="https://cdn.shopify.com"
+      crossorigin>
+
+    {% if settings.favicon != blank %}
+      <!--FAVICON-->
+      <link
+        rel="icon"
+        type="image/png"
+        href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    {% endif %}
+
+    <!--TITLE-->
+    <title>
+      {{ page_title }}
+      {% if current_tags %}
+        &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif %}
+      {% if current_page != 1 %}
+        &ndash; Page {{ current_page }}{% endif %}
+      {% unless page_title contains shop.name %}
+        &ndash; {{ shop.name }}{% endunless %}
+    </title>
+
+    <!--DESCRIPTION-->
+    {% if page_description %}
+      <meta name="description" content="{{ page_description | escape }}">
+    {% endif %}
+
+    <!--METATAGS-->
+    {% render 'meta-tags' %}
+
+    <!--LOAD JAVASCRIPT -->
+    <script src="{{ 'main.js' | asset_url }}" defer></script>
+
+    <!--LOAD SHOPIFY HOOK -->
+    {{ content_for_header }}
+
+    <!--LOAD MAIN CSS -->
+    {{ 'main.css' | asset_url | stylesheet_tag }}
+    <!--DESIGN-MODE-->
+
+    <!--IMPORT FONTS-->
+    <style>
+    </style>
+
+    <script>
+      if (Shopify.designMode) {
+        document.documentElement.classList.add('shopify-design-mode');
+      }
+    </script>
+  </head>
+  <body class="text-[#4B4F54] font-nunito {% if template == 'index'%}{% endif %}"> 
+    {% comment %} <div  
+    x-data="{ sticky:false }" 
+    class="w-full" 
+    @scroll.window="sticky = (window.pageYOffset < 50) ? false : true" 
+    :class="{ 'relative z-[999]': !sticky, 'top-0 left-0 fixed z-[999]' : sticky }"> {% endcomment %}
+    {% section 'announcement-bar' %}
+    {% section 'header' %}
+    {% comment %} </div> {% endcomment %}
+    <main>
+      {% case request.page_type %}
+      {% when 'policy' %}
+        {% section 'main-policies' %}
+      {% else %}
+        {{ content_for_layout }}
+      {% endcase %}
+    </main>
+    {% section 'footer' %}
+  </body>
+</html>
